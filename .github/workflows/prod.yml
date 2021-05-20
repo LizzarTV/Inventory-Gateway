@@ -59,7 +59,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build and push to latest
-        id: docker_build
+        id: docker_latest
         uses: docker/build-push-action@v2
         with:
           push: true
