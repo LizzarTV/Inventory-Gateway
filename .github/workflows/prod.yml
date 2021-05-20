@@ -73,7 +73,6 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          repository: toxictoast/inventory-gateway
           tags: toxictoast/inventory-gateway:latest
 
       - name: Build and push to build
@@ -81,7 +80,6 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          repository: toxictoast/inventory-gateway
           tags: toxictoast/inventory-gateway:build-${{ steps.buildId.outputs.build_number  }}
 
 
