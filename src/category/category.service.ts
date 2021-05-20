@@ -11,7 +11,7 @@ export class CategoryService {
     constructor(private readonly config: ConfigService, private readonly http: HttpService) {
         this.daprPort = config.get<number>('DAPR_HTTP_PORT', 3500);
         this.daprPubSubName = config.get<string>('DAPR_PUBSUB_NAME', 'pubsub');
-        this.daprTopic = config.get<string>('DAPR_TOPIC', 'categories');
+        this.daprTopic = 'inventory-categories';
     }
 
     /*private subscribe(): void {
