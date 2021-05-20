@@ -3,8 +3,6 @@ name: Gateway-Dev
 on:
   push:
     branches: [ feature/* ]
-  pull_request:
-    branches: [ feature/* ]
 
   workflow_dispatch:
 
