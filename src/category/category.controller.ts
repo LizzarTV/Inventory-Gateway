@@ -1,4 +1,4 @@
-import {Controller, Get, Param} from "@nestjs/common";
+import {Body, Controller, Get, Param} from "@nestjs/common";
 import {CategoryService} from "./category.service";
 
 @Controller('categories')
@@ -13,5 +13,10 @@ export class CategoryController {
     @Get('/:id')
     getCategory(@Param('id') id: string): void {
         this.service.getCategory(id);
+    }
+
+    @Post()
+    createCategory(@Body() body: { title: string }): void {
+        this.service.createCategory(body.title);
     }
 }
