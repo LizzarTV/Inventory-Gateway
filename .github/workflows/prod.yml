@@ -64,7 +64,8 @@ jobs:
 
     steps:
       - name: Output Build Number
-        run: echo "Build number is $BUILD_NUMBER"
+        id: buildId
+        run: echo "$BUILD_NUMBER"
 
       - uses: actions/checkout@v2
 
@@ -86,7 +87,7 @@ jobs:
         with:
           push: true
           repository: toxictoast/inventory-gateway
-          tags: latest, v1, build-$BUILD_NUMBER
+          tags: latest, v1, build-${{ steps.buildId.outputs }}
 
 
       - name: Image digest
