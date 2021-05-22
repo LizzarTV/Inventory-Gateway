@@ -9,7 +9,7 @@ export class CategoryController {
     @Get()
     getCategoryList(): any {
        this.service.getCategories().then(data => {
-           Logger.debug(data.body, 'CategoryController');
+           console.error(data);
        })
     }
 
