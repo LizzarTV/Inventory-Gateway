@@ -1,4 +1,4 @@
-import {Body, Controller, Get, Param} from "@nestjs/common";
+import {Body, Controller, Get, Param, Post} from "@nestjs/common";
 import {ItemService} from "./item.service";
 
 @Controller('item')
@@ -17,7 +17,6 @@ export class ItemController {
     }
 
     @Post()
-    createItem()
     createItem(@Body() body: { title: string }): any {
         return this.service.createItem(body.title);
     }
