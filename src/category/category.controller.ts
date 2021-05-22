@@ -15,21 +15,29 @@ export class CategoryController {
 
     @Get('/:id')
     getCategory(@Param('id') id: string): any {
-        const data = this.service.getCategory(id);
+        this.service.getCategory(id).then(data => {
+            Logger.debug(data, 'CategoryController');
+        })
     }
 
     @Post()
     createCategory(@Body() body: { title: string }): any {
-        return this.service.createCategory(body.title);
+        this.service.createCategory(body.title).then(data => {
+            Logger.debug(data, 'CategoryController');
+        })
     }
 
     @Put('/:id')
     updateCategory(@Param('id') id: string, @Body() body: { title: Optional<string>, active: Optional<boolean>}): any {
-        return this.service.updateCategory(id, body.title, body.active);
+        this.service.updateCategory(id, body.title, body.active).then(data => {
+            Logger.debug(data, 'CategoryController');
+        })
     }
 
     @Delete('/:id')
     deleteCategory(@Param('id') id: string): any {
-        return this.service.deleteCategory(id);
+        this.service.deleteCategory(id).then(data => {
+            Logger.debug(data, 'CategoryController');
+        })
     }
 }
