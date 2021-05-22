@@ -1,5 +1,6 @@
 import {HttpService, Injectable} from '@nestjs/common';
 import {ConfigService} from "@nestjs/config";
+import {Optional} from "../utils/baseTypes.util";
 
 @Injectable()
 export class CategoryService {
@@ -25,24 +26,30 @@ export class CategoryService {
             .catch(error => console.error(error));
     }*/
 
-    private postRequest(pattern: string, data: any): void {
-        this.http.post(`http://localhost:${this.daprPort}/v1.0/publish/${this.daprPubSubName}/${this.daprTopic}`, {
+    private postRequest(pattern: string, data: any): Promise<any> {
+        return this.http.post(`http://localhost:${this.daprPort}/v1.0/publish/${this.daprPubSubName}/${this.daprTopic}`, {
             pattern,
             data
         },{ headers: this.headersRequest }).toPromise()
-            .then(data => console.error('data', data))
-            .catch(error => console.error('error', error));
     }
 
-    public getCategories(): void {
-        this.postRequest('category-list', {});
+    public getCategories(): Promise<any> {
+        return this.postRequest('category-list', {});
     }
 
-    public getCategory(id: string): void {
-        this.postRequest('category-single', { id });
+    public getCategory(id: string): Promise<any> {
+        return this.postRequest('category-single', { id });
     }
 
-    public createCategory(title: string): void {
-        this.postRequest('category-create', { title });
+    public createCategory(title: string): Promise<any> {
+        return this.postRequest('category-create', { title });
+    }
+
+    public updateCategory(id: string, title: Optional<string>, active: Optional<Boolean>): Promise<any> {
+        return this.postRequest('category-update', { id, title, active });
+    }
+
+    public deleteCategory(id: string): Promise<any> {
+        return this.postRequest('category-delete', { id });
     }
 }
