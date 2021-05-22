@@ -1,4 +1,4 @@
-import {Body, Controller, Delete, Get, Param, Post, Put} from "@nestjs/common";
+import {Body, Controller, Delete, Get, Logger, Param, Post, Put} from "@nestjs/common";
 import {CategoryService} from "./category.service";
 import {Optional} from "../utils/baseTypes.util";
 
@@ -8,12 +8,14 @@ export class CategoryController {
 
     @Get()
     getCategoryList(): any {
-        return this.service.getCategories();
+       this.service.getCategories().then(data => {
+           Logger.debug(data, 'CategoryController');
+       })
     }
 
     @Get('/:id')
     getCategory(@Param('id') id: string): any {
-        return this.service.getCategory(id);
+        const data = this.service.getCategory(id);
     }
 
     @Post()
