@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import {CategoryModule} from "./category/category.module";
 import {ConfigModule} from "@nestjs/config";
+import {ItemModule} from "./item/item.module";
 
 @Module({
   imports: [
@@ -8,7 +9,8 @@ import {ConfigModule} from "@nestjs/config";
         ignoreEnvFile: true,
         isGlobal: true,
       }),
-      CategoryModule
+      CategoryModule,
+      ItemModule,
   ],
 })
 export class AppModule {}
