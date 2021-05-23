@@ -7,7 +7,7 @@ import {Observable} from "rxjs";
 @Injectable()
 export class CategoryService {
     constructor(
-        @Inject('category_service') private readonly proxy: ClientProxy,
+        @Inject('AMQP_SERVICE') private readonly proxy: ClientProxy,
         private readonly config: ConfigService
     ) {
         this.proxy.connect()

@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import {CategoryModule} from "./category/category.module";
 import {ConfigModule} from "@nestjs/config";
 import {ItemModule} from "./item/item.module";
+import {AmqpModule} from "./amqp.module";
 
 @Module({
   imports: [
@@ -9,6 +10,7 @@ import {ItemModule} from "./item/item.module";
         ignoreEnvFile: true,
         isGlobal: true,
       }),
+      AmqpModule,
       CategoryModule,
       ItemModule,
   ],
