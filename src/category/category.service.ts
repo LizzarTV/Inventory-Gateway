@@ -1,4 +1,4 @@
-import {HttpService, Inject, Injectable} from '@nestjs/common';
+import {HttpService, Inject, Injectable, Logger} from '@nestjs/common';
 import {ConfigService} from "@nestjs/config";
 import {Optional} from "../utils/baseTypes.util";
 import {ClientProxy} from "@nestjs/microservices";
@@ -10,7 +10,9 @@ export class CategoryService {
         @Inject('AMQP_SERVICE') private readonly proxy: ClientProxy,
         private readonly config: ConfigService
     ) {
-        this.proxy.connect()
+        this.proxy.connect().catch(err => {
+            Logger.error(err)
+        })
     }
 
     public getCategories() {

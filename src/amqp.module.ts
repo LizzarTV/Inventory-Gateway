@@ -1,4 +1,4 @@
-import {Module} from "@nestjs/common";
+import {Logger, Module} from "@nestjs/common";
 import {ConfigService} from "@nestjs/config";
 import {RmqUrl} from "@nestjs/microservices/external/rmq-url.interface";
 import {ClientProxyFactory, RmqOptions, Transport} from "@nestjs/microservices";
@@ -30,6 +30,8 @@ const amqpService = {
                 noAck: false,
             },
         } as RmqOptions;
+        Logger.debug(rmqUrl, 'RMQURL');
+        Logger.debug(clientOptions, 'Options');
         //
         return ClientProxyFactory.create(clientOptions)
     },
