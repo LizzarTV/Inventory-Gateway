@@ -1,45 +1,44 @@
-import {HttpService, Injectable} from "@nestjs/common";
+import {Inject, Injectable, Logger} from "@nestjs/common";
+import {ClientProxy} from "@nestjs/microservices";
 import {ConfigService} from "@nestjs/config";
 import {Optional} from "../utils/baseTypes.util";
 
 @Injectable()
 export class ItemService {
+    constructor(
+        @Inject('AMQP_SERVICE') private readonly proxy: ClientProxy,
+        private readonly config: ConfigService
+    ) { }
 
-    private readonly daprPort: number;
-    private readonly daprPubSubName: string;
-    private readonly daprTopic: string;
-
-    constructor(private readonly config: ConfigService, private readonly http: HttpService) {
-        this.daprPort = config.get<number>('DAPR_HTTP_PORT', 3500);
-        this.daprPubSubName = config.get<string>('DAPR_PUBSUB_NAME', 'pubsub');
-        this.daprTopic = 'inventory-item';
+    async onApplicationBootstrap(): Promise<void> {
+        await this.proxy.connect().then(() => Logger.debug('Proxy connected...')).catch(err => Logger.error(err));
     }
 
-    private postRequest(pattern: string, data: any): Promise<any> {
-        return this.http.post(`http://localhost:${this.daprPort}/v1.0/publish/${this.daprPubSubName}/${this.daprTopic}`, {
-            pattern,
-            data
-        }).toPromise()
+    public getItems() {
+        return this.publishMessage('item-list', {});
     }
 
-    public getItems(): Promise<any> {
-        return this.postRequest('item-list', {});
+    public getItem(id: string) {
+        return this.publishMessage('item-single', { id });
     }
 
-    public getItem(id: string): Promise<any> {
-        return this.postRequest('item-single', { id });
+    public createItem(title: string) {
+        return this.publishMessage('item-create', { title });
     }
 
-    public createItem(title: string): Promise<any> {
-        return this.postRequest('item-create', { title });
+    public updateItem(id: string, title: Optional<string>, active: Optional<boolean>) {
+        return this.publishMessage('item-update', { id, title, active });
     }
 
-    public updateCategory(id: string, title: Optional<string>, active: Optional<boolean>): Promise<any> {
-        return this.postRequest('item-update', { id, title, active });
+    public deleteItem(id: string) {
+        return this.publishMessage('item-delete', { id });
     }
 
-    public deleteItem(id: string): Promise<any> {
-        return this.postRequest('item-delete', { id });
+    public restoreItem(id: string) {
+        return this.publishMessage('item-restore', { id });
     }
 
+    private publishMessage<T, V>(pattern: string, data: T): Promise<V> {
+        return this.proxy.send(pattern, data).toPromise();
+    }
 }
