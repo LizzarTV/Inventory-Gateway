@@ -1,4 +1,4 @@
-import {Body, Controller, Delete, Get, Logger, Param, Post, Put} from "@nestjs/common";
+import {Body, Controller, Delete, Get, HttpException, Logger, Param, Post, Put} from "@nestjs/common";
 import {CategoryService} from "./category.service";
 import {Optional} from "../utils/baseTypes.util";
 
@@ -8,12 +8,12 @@ export class CategoryController {
 
     @Get()
     getCategoryList(): any {
-        return this.service.getCategories();
+        return this.service.getCategories().catch(error => this.onError(error.code, error.message));
     }
 
     @Get('/:id')
     getCategory(@Param('id') id: string): any {
-        return this.service.getCategory(id);
+        return this.service.getCategory(id).catch(error => this.onError(error.code, error.message));
     }
 
     @Post()
@@ -24,4 +24,8 @@ export class CategoryController {
 
     @Delete('/:id')
     deleteCategory(@Param('id') id: string): any { }
+
+    private onError(code: number, message: string): void {
+        throw new HttpException(message, code);
+    }
 }
