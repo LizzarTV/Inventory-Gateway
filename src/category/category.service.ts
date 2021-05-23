@@ -1,6 +1,7 @@
 import {HttpService, Injectable} from '@nestjs/common';
 import {ConfigService} from "@nestjs/config";
 import {Optional} from "../utils/baseTypes.util";
+import {BaseClient} from "../utils/baseClient.util";
 
 @Injectable()
 export class CategoryService {
@@ -8,11 +9,13 @@ export class CategoryService {
     private readonly daprPort: number;
     private readonly daprPubSubName: string;
     private readonly daprTopic: string;
+    private readonly daprClient: BaseClient;
 
     constructor(private readonly config: ConfigService, private readonly http: HttpService) {
         this.daprPort = config.get<number>('DAPR_HTTP_PORT', 3500);
         this.daprPubSubName = config.get<string>('DAPR_PUBSUB_NAME', 'pubsub');
         this.daprTopic = 'inventory-category';
+        this.daprClient = new BaseClient(this.daprPort);
     }
 
     /*private subscribe(): void {
@@ -23,6 +26,11 @@ export class CategoryService {
     }*/
 
     private postRequest(pattern: string, data: any): Promise<any> {
+        const dapr = this.daprClient.publishEvent<{ pattern: string, data: any }, any>(this.daprTopic, this.daprPubSubName, {
+            pattern,
+            data
+        });
+        console.error(dapr);
         return this.http.post(`http://localhost:${this.daprPort}/v1.0/publish/${this.daprPubSubName}/${this.daprTopic}`, {
             pattern,
             data
