@@ -35,6 +35,10 @@ export class CategoryService implements OnApplicationBootstrap {
         return this.publishMessage('category-delete', { id });
     }
 
+    public restoreCategory(id: string) {
+        return this.publishMessage('category-restore', { id });
+    }
+
     private publishMessage<T, V>(pattern: string, data: T): Promise<V> {
         return this.proxy.send(pattern, data).toPromise();
     }
