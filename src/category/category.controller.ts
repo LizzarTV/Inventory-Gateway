@@ -17,7 +17,9 @@ export class CategoryController {
     }
 
     @Post()
-    createCategory(@Body() body: { title: string }): any {  }
+    createCategory(@Body() body: { title: string }): any {
+        return this.service.createCategory(body.title).catch(error => this.onError(error.code, error.message));
+    }
 
     @Put('/:id')
     updateCategory(@Param('id') id: string, @Body() body: { title: Optional<string>, active: Optional<boolean>}): any {  }
