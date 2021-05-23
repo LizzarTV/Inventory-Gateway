@@ -4,6 +4,7 @@ import {ConfigModule} from "@nestjs/config";
 import {ItemModule} from "./item/item.module";
 import {AmqpModule} from "./amqp.module";
 import {LocationModule} from "./location/location.module";
+import {CompanyModule} from "./company/company.module";
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import {LocationModule} from "./location/location.module";
       CategoryModule,
       ItemModule,
       LocationModule,
+      CompanyModule
   ],
 })
 export class AppModule {}
