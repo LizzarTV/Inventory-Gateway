@@ -5,6 +5,7 @@ import {ItemModule} from "./item/item.module";
 import {AmqpModule} from "./amqp.module";
 import {LocationModule} from "./location/location.module";
 import {CompanyModule} from "./company/company.module";
+import {SizeModule} from "./size/size.module";
 
 @Module({
   imports: [
@@ -16,7 +17,8 @@ import {CompanyModule} from "./company/company.module";
       CategoryModule,
       ItemModule,
       LocationModule,
-      CompanyModule
+      CompanyModule,
+      SizeModule
   ],
 })
 export class AppModule {}
