@@ -11,7 +11,7 @@ export class ItemService {
     ) { }
 
     async onApplicationBootstrap(): Promise<void> {
-        await this.proxy.connect().then(() => Logger.debug('Proxy connected...')).catch(err => Logger.error(err));
+        await this.proxy.connect().then(() => Logger.debug('Item Proxy connected...')).catch(err => Logger.error(err));
     }
 
     public getItems() {

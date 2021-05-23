@@ -2,7 +2,7 @@ import {Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, P
 import {ItemService} from "./item.service";
 import {Optional} from "../utils/baseTypes.util";
 
-@Controller('item')
+@Controller('items')
 export class ItemController {
     constructor(private readonly service: ItemService) {
     }

@@ -12,7 +12,7 @@ export class CategoryService implements OnApplicationBootstrap {
     ) { }
 
     async onApplicationBootstrap(): Promise<void> {
-        await this.proxy.connect().then(() => Logger.debug('Proxy connected...')).catch(err => Logger.error(err));
+        await this.proxy.connect().then(() => Logger.debug('Category Proxy connected...')).catch(err => Logger.error(err));
     }
 
     public getCategories() {
