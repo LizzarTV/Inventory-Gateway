@@ -8,36 +8,20 @@ export class CategoryController {
 
     @Get()
     getCategoryList(): any {
-       this.service.getCategories().then(data => {
-           console.error(data);
-       })
+        return this.service.getCategories();
     }
 
     @Get('/:id')
     getCategory(@Param('id') id: string): any {
-        this.service.getCategory(id).then(data => {
-            Logger.debug(data.body, 'CategoryController');
-        })
+        return this.service.getCategory(id);
     }
 
     @Post()
-    createCategory(@Body() body: { title: string }): any {
-        this.service.createCategory(body.title).then(data => {
-            Logger.debug(data.body, 'CategoryController');
-        })
-    }
+    createCategory(@Body() body: { title: string }): any {  }
 
     @Put('/:id')
-    updateCategory(@Param('id') id: string, @Body() body: { title: Optional<string>, active: Optional<boolean>}): any {
-        this.service.updateCategory(id, body.title, body.active).then(data => {
-            Logger.debug(data.body, 'CategoryController');
-        })
-    }
+    updateCategory(@Param('id') id: string, @Body() body: { title: Optional<string>, active: Optional<boolean>}): any {  }
 
     @Delete('/:id')
-    deleteCategory(@Param('id') id: string): any {
-        this.service.deleteCategory(id).then(data => {
-            Logger.debug(data.body, 'CategoryController');
-        })
-    }
+    deleteCategory(@Param('id') id: string): any { }
 }

@@ -10,7 +10,9 @@ export class BaseClient {
 
     constructor(port: number) {
         this.daprPort = port;
-        this.daprClient = new dapr_grpc.DaprClient(`localhost:${port}`, grpc.credentials.createInsecure());
+
+        // this.daprClient = new dapr_grpc.DaprClient(`localhost:${port}`, grpc.credentials.createInsecure());
+        this.daprClient = new dapr_pb(`localhost:${port}`);
     }
 
     public publishEvent<T,V>(topic: string, pubsub: string, data: T) {
