@@ -1,18 +1,18 @@
-import {HttpService, Inject, Injectable, Logger} from '@nestjs/common';
+import {HttpService, Inject, Injectable, Logger, OnApplicationBootstrap} from '@nestjs/common';
 import {ConfigService} from "@nestjs/config";
 import {Optional} from "../utils/baseTypes.util";
 import {ClientProxy} from "@nestjs/microservices";
 import {Observable} from "rxjs";
 
 @Injectable()
-export class CategoryService {
+export class CategoryService implements OnApplicationBootstrap {
     constructor(
         @Inject('AMQP_SERVICE') private readonly proxy: ClientProxy,
         private readonly config: ConfigService
-    ) {
-        this.proxy.connect().catch(err => {
-            Logger.error(err)
-        })
+    ) { }
+
+    async onApplicationBootstrap(): Promise<void> {
+        await this.proxy.connect().then(() => Logger.debug('Proxy connected...')).catch(err => Logger.error(err));
     }
 
     public getCategories() {
