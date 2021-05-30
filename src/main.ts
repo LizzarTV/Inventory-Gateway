@@ -1,11 +1,16 @@
-import { INestApplication } from '@nestjs/common';
+import { HttpException, INestApplication } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-  await corsConfig(app);
-  await app.listen(3000);
+  try {
+    const app = await NestFactory.create(AppModule);
+    await corsConfig(app);
+    await app.listen(3000);
+  } catch (error) {
+    throw new HttpException(error);
+  }
+  
 }
 
 async function corsConfig(app: INestApplication): Promise<void> {
