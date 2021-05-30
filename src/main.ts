@@ -9,12 +9,12 @@ async function bootstrap() {
 }
 
 async function corsConfig(app: INestApplication): Promise<void> {
-  const whitelist = ['http://localhost:3000'];
+  const whitelist = ['http://localhost:3000', 'http://localhost:3000/categories', 'http://localhost:3000/items'];
   app.enableCors({
     origin: function (origin, callback) {
-      if (whitelist.indexOf(origin) !== -1) {
+      if (whitelist.indexOf(origin) !== -1 || typeof origin === undefined) {
         console.log("allowed cors for:", origin)
-        callback(null, true)
+        callback(null, true);
       } else {
         console.log("blocked cors for:", origin)
         callback(new Error('Not allowed by CORS'))
