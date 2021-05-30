@@ -1,4 +1,4 @@
-import { HttpException, INestApplication } from '@nestjs/common';
+import { HttpException, HttpStatus, INestApplication } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 
@@ -8,7 +8,7 @@ async function bootstrap() {
     await corsConfig(app);
     await app.listen(3000);
   } catch (error) {
-    throw new HttpException(error);
+    throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
   }
   
 }
