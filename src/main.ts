@@ -4,8 +4,8 @@ import { AppModule } from './app.module';
 
 async function bootstrap() {
   try {
-    const app = await NestFactory.create(AppModule);
-    await corsConfig(app);
+    const app = await NestFactory.create(AppModule, { cors: false });
+    // await corsConfig(app);
     await app.listen(3000);
   } catch (error) {
     throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
