@@ -1,67 +1,88 @@
-import {Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Put} from "@nestjs/common";
-import {ItemService} from "./item.service";
+import {Body, Controller, Delete, Get, HttpException, HttpStatus, Inject, Param, Post, Put} from "@nestjs/common";
 import {Optional} from "../utils/baseTypes.util";
+import {ClientProxy} from "@nestjs/microservices";
+import {ItemPatterns} from "../utils/patterns.util";
 
 @Controller('items')
 export class ItemController {
-    constructor(private readonly service: ItemService) {
-    }
+    constructor(@Inject('AMQP_SERVICE') private readonly proxy: ClientProxy,) {}
 
     @Get()
-    getItemList(): Promise<unknown> {
+    async getItemList(): Promise<unknown> {
         try {
-            return this.service.getItems().catch(error => this.onError(error.code, error.message));
+            const pattern = ItemPatterns.LIST;
+            const data = await this.proxy.send(pattern, {}).toPromise();
+            return data;
         } catch (error) {
             this.onError(error.code, error.message);
         }
     }
 
     @Get('/:id')
-    getItem(@Param('id') id: string): Promise<unknown> {
+    async getItem(@Param('id') id: string): Promise<unknown> {
         try {
-            return this.service.getItem(id).catch(error => this.onError(error.code, error.message));
+            const pattern = ItemPatterns.SINGLE;
+            const data = await this.proxy.send(pattern, { id }).toPromise();
+            return data;
         } catch (error) {
             this.onError(error.code, error.message);
         }
     }
 
     @Post()
-    createItem(@Body() body: { title: string }): Promise<unknown> {
+    async createItem(@Body() body: { title: string }): Promise<unknown> {
         try {
-            return this.service.createItem(body.title).catch(error => this.onError(error.code, error.message));
+            const pattern = ItemPatterns.CREATE;
+            const data = await this.proxy.send(pattern, { title: body.title });
+            return data;
         } catch (error) {
             this.onError(error.code, error.message);
         }
     }
 
     @Put('/:id')
-    updateItem(@Param('id') id: string, @Body() body: { title: Optional<string>, active: Optional<boolean>}): Promise<unknown> {
+    async updateItem(@Param('id') id: string, @Body() body: { title: Optional<string>, active: Optional<boolean>}): Promise<unknown> {
         try {
-            return this.service.updateItem(id, body.title, body.active).catch(error => this.onError(error.code, error.message));
+            const pattern = ItemPatterns.UPDATE;
+            const data = await this.proxy.send(pattern, { title: body.title });
+            return data;
         } catch (error) {
             this.onError(error.code, error.message);
         }
     }
 
     @Delete('/:id')
-    deleteItem(@Param('id') id: string): Promise<unknown> {
+    async deleteItem(@Param('id') id: string): Promise<unknown> {
         try {
-            return this.service.deleteItem(id).catch(error => this.onError(error.code, error.message));
+            const pattern = ItemPatterns.DELETE;
+            const data = await this.proxy.send(pattern, { id });
+            return data;
         } catch (error) {
             this.onError(error.code, error.message);
         }
     }
 
     @Put('/:id/restore')
-    restoreItem(@Param('id') id: string): Promise<unknown> {
+    async restoreItem(@Param('id') id: string): Promise<unknown> {
         try {
-            return this.service.restoreItem(id).catch(error => this.onError(error.code, error.message));
+            const pattern = ItemPatterns.RESTORE;
+            const data = await this.proxy.send(pattern, { id });
+            return data;
         } catch (error) {
             this.onError(error.code, error.message);
         }
     }
 
     private onError(code: number, message: string): void {
-        throw new HttpException(message || 'Unknown Error', code || HttpStatus.INTERNAL_SERVER_ERROR);
+        throw new HttpException(message, code || HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    private async publishMessage<T, V>(pattern: string, data: T): Promise<V> {
+        try {
+            const result = await this.proxy.send(pattern, data).toPromise();
+            return result;
+        } catch (error) {
+            this.onError(error.code, error.message);
+        }
     }
 }

@@ -11,7 +11,6 @@ import {
     Post,
     Put
 } from "@nestjs/common";
-import {CategoryService} from "./category.service";
 import {Optional} from "../utils/baseTypes.util";
 import {ClientProxy} from "@nestjs/microservices";
 import {CategoryPatterns} from "../utils/patterns.util";
