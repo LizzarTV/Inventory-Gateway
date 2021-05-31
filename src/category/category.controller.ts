@@ -1,60 +1,88 @@
-import {Body, Controller, Delete, Get, HttpException, HttpStatus, Logger, Param, Post, Put} from "@nestjs/common";
+import {
+    Body,
+    Controller,
+    Delete,
+    Get,
+    HttpException,
+    HttpStatus,
+    Inject,
+    Logger,
+    Param,
+    Post,
+    Put
+} from "@nestjs/common";
 import {CategoryService} from "./category.service";
 import {Optional} from "../utils/baseTypes.util";
+import {ClientProxy} from "@nestjs/microservices";
+import {CategoryPatterns} from "../utils/patterns.util";
 
 @Controller('categories')
 export class CategoryController {
-    constructor(private readonly service: CategoryService) {}
+    constructor(
+        @Inject('AMQP_SERVICE') private readonly proxy: ClientProxy,
+    ) {}
 
     @Get()
-    getCategoryList(): Promise<unknown> {
+    async getCategoryList(): Promise<unknown> {
         try {
-            return this.service.getCategories().catch(error => this.onError(error.code, error.message));
+            const pattern = CategoryPatterns.LIST;
+            const data = await this.proxy.send(pattern, {}).toPromise();
+            return data;
         } catch (error) {
             this.onError(error.code, error.message);
         }
     }
 
     @Get('/:id')
-    getCategory(@Param('id') id: string): Promise<unknown> {
+    async getCategory(@Param('id') id: string): Promise<unknown> {
         try {
-            return this.service.getCategory(id).catch(error => this.onError(error.code, error.message));
+            const pattern = CategoryPatterns.SINGLE;
+            const data = await this.proxy.send(pattern, { id });
+            return data;
         } catch (error) {
             this.onError(error.code, error.message);
         }
     }
 
     @Post()
-    createCategory(@Body() body: { title: string }): Promise<unknown> {
+    async createCategory(@Body() body: { title: string }): Promise<unknown> {
         try {
-            return this.service.createCategory(body.title).catch(error => this.onError(error.code, error.message));
+            const pattern = CategoryPatterns.CREATE;
+            const data = await this.proxy.send(pattern, { title: body.title }).toPromise();
+            return data;
         } catch (error) {
             this.onError(error.code, error.message);
         }
     }
 
     @Put('/:id')
-    updateCategory(@Param('id') id: string, @Body() body: { title: Optional<string>, active: Optional<boolean>}): Promise<unknown> {
+    async updateCategory(@Param('id') id: string, @Body() body: { title: Optional<string>, active: Optional<boolean>}): Promise<unknown> {
         try {
-            return this.service.updateCategory(id, body.title, body.active).catch(error => this.onError(error.code, error.message));
+            const pattern = CategoryPatterns.UPDATE;
+            const data = await this.proxy.send(pattern, { title: body.title, active: body.active }).toPromise();
+            return data;
         } catch (error) {
             this.onError(error.code, error.message);
         }
     }
 
     @Delete('/:id')
-    deleteCategory(@Param('id') id: string): Promise<unknown> {
+    async deleteCategory(@Param('id') id: string): Promise<unknown> {
         try {
-             return this.service.deleteCategory(id).catch(error => this.onError(error.code, error.message));
+             const pattern = CategoryPatterns.DELETE;
+             const data = await this.proxy.send(pattern, { id }).toPromise();
+             return data;
         } catch (error) {
             this.onError(error.code, error.message);
         }
     }
 
     @Put('/:id/restore')
-    restoreCategory(@Param('id') id: string): Promise<unknown> {
+    async restoreCategory(@Param('id') id: string): Promise<unknown> {
         try {
-            return this.service.restoreCategory(id).catch(error => this.onError(error.code, error.message));
+            const pattern = CategoryPatterns.RESTORE;
+            const data = await this.proxy.send(pattern, { id }).toPromise();
+            return data;
         } catch (error) {
             this.onError(error.code, error.message);
         }
@@ -62,5 +90,14 @@ export class CategoryController {
 
     private onError(code: number, message: string): void {
         throw new HttpException(message, code || HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    private async publishMessage<T, V>(pattern: string, data: T): Promise<V> {
+        try {
+            const result = await this.proxy.send(pattern, data).toPromise();
+            return result;
+        } catch (error) {
+            this.onError(error.code, error.message);
+        }
     }
 }
